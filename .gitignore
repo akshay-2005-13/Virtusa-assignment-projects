@@ -1,0 +1,17 @@
+# Raw data files
+raw_data_ignore/
+
+# Python
+__pycache__/
+*.pyc
+expense_tracker/data/expenses.csv
+
+# Java build output
+library-management/target/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# VSCode settings
+.vscode/
