@@ -1,77 +1,38 @@
 # Virtusa Assignment Projects
 
-Three projects built from scratch covering Java, Python, and SQL.
-Each project demonstrates core programming concepts and clean architecture.
+Hi, I'm Akshay. This repo has three projects I built as part of my assignment —
+one in Java, one in Python, and one in SQL. I wrote everything from scratch,
+so this is a good look at how I think through problems and structure code.
 
 ---
 
-## Project 1 — Library Management System (Java)
+## 1. Library Management System — Java
 
-A command-line Library Management System built with Java OOP principles
-and a clean layered architecture.
+A command-line app for managing books, users, borrowing, and returning.
+Built with Java OOP and a layered architecture.
 
-### Tech Stack
-- Java 17
-- Maven (build tool)
+**Tools:** Java 17, Maven
 
-### OOP Concepts Applied
-- **Encapsulation** — all model fields are private with controlled access via getters/setters
-- **Inheritance** — all custom exceptions extend a base `LibraryException` class
-- **Abstraction** — Repository interfaces define contracts; implementations can be swapped without changing business logic
-- **Dependency Injection** — service layer receives repositories via constructor
+**What it does:**
+- Add books and register users
+- Borrow and return books with due dates (14 days)
+- Calculates late fines automatically (Rs.2/day)
+- Search by title or author
+- View full transaction history
 
-### Architecture
-
-```
-library-management/
-├── model/           → Book, User, Transaction classes
-├── repository/      → Interfaces + InMemory implementations
-│   └── impl/        → InMemoryBookRepository, InMemoryUserRepository, InMemoryTransactionRepository
-├── service/         → Business logic (borrow, return, fine calculation)
-├── exception/       → Custom exception hierarchy
-│   ├── LibraryException.java
-│   ├── BookNotFoundException.java
-│   ├── UserNotFoundException.java
-│   ├── BookNotAvailableException.java
-│   └── MaxBorrowLimitException.java
-└── ui/              → CLI menu system
-```
-
-### Features
-- Add and manage books with copy tracking
-- Register library users with borrow limit enforcement (max 3 books)
-- Borrow and return books with automatic due date (14 days)
-- Automatic late fine calculation (Rs.2 per day after due date)
-- Search books by title or author
-- View all users and their borrowed books
-- Full transaction history per user
-- View all active (unreturned) transactions
-
-### How to Run
-
+**How to run:**
 ```bash
 cd library-management
 mvn compile
 mvn compile exec:java
 ```
 
-### Key Design Decisions
-
-| Decision | Reason |
-|----------|--------|
-| `HashMap<String, Book>` for storage | O(1) ISBN lookup regardless of library size |
-| `unit_price` stored in `Transaction` | Preserves historical price at time of borrowing |
-| Repository as interface | Allows swapping to a real database without changing service layer |
-| `Optional<T>` return type | Forces callers to handle "not found" case explicitly, prevents NullPointerException |
-| Custom exception per scenario | Caller knows exactly what went wrong — BookNotFound vs BookNotAvailable |
-
-### Sample Output
+**Sample output:**
 
 ```
 ========================================
    Welcome to Library Management System
 ========================================
-
 1. Add Book
 2. Register User
 3. Borrow Book
@@ -82,230 +43,226 @@ mvn compile exec:java
 8. View User Transaction History
 9. View All Active Transactions
 0. Exit
+========================================
+Enter your choice: 3
+
+--- Borrow Book ---
+Enter User ID: U001
+Enter Book ISBN: 978-0-13-110362-7
+
+Book borrowed successfully!
+Transaction ID: a3f2c1d4-9e8b-4a7f-b2c1
+Borrow Date:    2026-04-13
+Due Date:       2026-04-27
+
+Enter your choice: 9
+
+--- Active Transactions ---
+------------------------
+Transaction ID : a3f2c1d4-9e8b-4a7f
+Book           : The C Programming Language
+User           : John Doe
+Borrow Date    : 2026-04-13
+Due Date       : 2026-04-27
+Return Date    : Not returned yet
+Fine           : Rs.0.0
+
+Enter your choice: 4
+
+--- Return Book ---
+Enter User ID: U001
+Enter Book ISBN: 978-0-13-110362-7
+
+Book returned successfully! No fine.
 ```
+
+**How I structured it:**
+
+I split it into 5 layers — model, exceptions, repository, service, and UI.
+The service layer handles all the rules like borrow limits and fine calculation.
+The repository layer is just an interface, so if I wanted to swap from a HashMap
+to a real database, I'd only change one file and nothing else breaks.
 
 ---
 
-## Project 2 — Smart Expense Tracker with Insights (Python)
+## 2. Smart Expense Tracker — Python
 
-A CLI-based expense tracking application with a full analytics engine
-and matplotlib visualizations — built with clean module separation.
+A CLI app to track daily expenses, view summaries, and generate charts.
+I kept each file focused on one job so the code stays clean and easy to follow.
 
-### Tech Stack
-- Python 3.11
-- matplotlib (charts and visualizations)
-- csv — built-in (data persistence)
-- datetime — built-in (date handling)
+**Tools:** Python 3.11, matplotlib
 
-### Python Concepts Applied
-- **OOP** — `Expense` class with `@classmethod`, `__str__`, and `__init__`
-- **File I/O** — `csv.writer` for writing, `csv.DictReader` for reading
-- **Lambda functions** — used with `max()`, `min()`, `sorted()`
-- **Exception handling** — `try/except` on all user inputs, never crashes
-- **Set operations** — used for unique date counting in daily averages
-- **Separation of concerns** — each module has exactly one responsibility
+**What it does:**
+- Add expenses with date, amount, category, description
+- Monthly summaries with highest and lowest month
+- Category breakdown with percentage share
+- Spending trend (month-over-month change)
+- 5 types of charts
 
-### Project Structure
-
-```
-expense_tracker/
-├── main.py          → Entry point (2 lines)
-├── expense.py       → Expense data class
-├── storage.py       → CSV read/write layer
-├── tracker.py       → Business logic and validation
-├── insights.py      → Analytics engine
-├── visualizer.py    → matplotlib charts (5 chart types)
-├── cli.py           → CLI menu and user interaction
-└── data/
-    └── expenses.csv → Persistent data storage
-```
-
-### Features
-- Add expenses with date, amount, category, and description
-- View all expenses with running total
-- View current month expenses automatically
-- Monthly summary with highest and lowest month detection
-- Category breakdown with percentage share and transaction count
-- Spending insights — averages, extremes, month-over-month trend
-- Delete expenses with confirmation prompt
-- 5 chart types via matplotlib
-
-### Chart Types
-
-| Chart | What it shows |
-|-------|---------------|
-| Category Pie Chart | Proportional spending per category |
-| Monthly Bar Chart | Total spend per month, highlights highest |
-| Category Bar Chart | Bar for amount + line for transaction count |
-| Spending Trend Line | Month-over-month trend with fill area |
-| Daily Spending Chart | Day-by-day bars with average line overlay |
-
-### How to Run
-
+**How to run:**
 ```bash
 cd expense_tracker
 pip install matplotlib
 python main.py
 ```
 
-### Key Design Decisions
-
-| Decision | Reason |
-|----------|--------|
-| CSV over JSON | Data is tabular with fixed fields — CSV is ideal |
-| `storage.py` is the only file touching CSV | If storage changes, nothing else breaks |
-| `from_dict()` as `@classmethod` | Creates objects from CSV rows without needing an existing instance |
-| `CATEGORIES` as class variable | Accessible everywhere as `Expense.CATEGORIES` without creating an object |
-| Input validation loops | User is never shown a crash — they always get a retry prompt |
-
-### Sample Output
+**Sample output:**
 
 ```
 =======================================================
        SMART EXPENSE TRACKER WITH INSIGHTS
 =======================================================
+1.  Add New Expense
+2.  View All Expenses
+3.  View This Month's Expenses
+4.  Monthly Summary
+5.  Category Analysis
+6.  Spending Insights
+7.  Delete an Expense
+8.  Charts & Visualizations
+0.  Exit
+-------------------------------------------------------
+Enter your choice: 5
 
 --- Category Analysis ---
 
   Total spending: Rs.12450.00
 
-  CATEGORY        TRANSACTIONS        TOTAL    SHARE
+  CATEGORY        TRANSACTIONS        TOTAL      SHARE
   ----------------------------------------------------
-  Food                       8    Rs.3200.0    25.7%
+  Transport                  5     Rs.4500.0     36.1%
+  ##########
+  Food                       8     Rs.3200.0     25.7%
+  ######
+  Shopping                   3     Rs.2800.0     22.5%
+  ######
+  Bills                      2     Rs.1950.0     15.7%
   ####
-  Transport                  5    Rs.4500.0    36.1%
-  #######
-  Shopping                   3    Rs.2800.0    22.5%
-  ####
+
+  Highest spending category: Transport (Rs.4500.00)
+
+Enter your choice: 6
+
+--- Spending Insights ---
+
+  Total expenses recorded  : 18
+  Total amount spent       : Rs.12450.00
+  Average per transaction  : Rs.691.67
+  Average daily spending   : Rs.1037.50
+
+  Spending trend:
+  2026-02: Rs.3800.00  ↑ 12.4% vs previous month
+  2026-03: Rs.4250.00  ↑ 11.8% vs previous month
+  2026-04: Rs.4400.00  ↑  3.5% vs previous month
+```
+
+**How I structured it:**
+
+There are 7 files and each one does exactly one thing.
+`storage.py` is the only file that reads or writes the CSV.
+`insights.py` just does calculations — it never touches files.
+`cli.py` just handles input and output — no logic in there.
+This way each piece can change independently without breaking the others.
+
+---
+
+## 3. Online Retail Sales Analysis — SQL
+
+A database project where I designed a retail schema and wrote analytical
+queries to pull business insights from the data.
+
+**Tools:** MySQL 8.0, MySQL Workbench
+
+**Tables:** Customers, Products, Orders, Order_Items
+
+**Queries I wrote:**
+- Top 10 best selling products by quantity and revenue
+- Most valuable customers by lifetime spend
+- Monthly revenue trend
+- Category-wise sales with percentage share
+- Customers who haven't ordered in 6 months
+
+**How to run:**
+```
+1. Open MySQL Workbench
+2. Run retail_sales_database.sql — creates all tables and inserts data
+3. Open queries.sql and run any query you want
+```
+
+**Sample output:**
+
+```sql
+-- Top 5 products by revenue
+
+SELECT p.name, p.category,
+       SUM(oi.quantity) AS total_sold,
+       SUM(oi.quantity * oi.unit_price) AS total_revenue
+FROM order_items oi
+JOIN products p ON oi.product_id = p.product_id
+GROUP BY p.product_id
+ORDER BY total_revenue DESC
+LIMIT 5;
+
++---------------------------+-------------+------------+--------------+
+| name                      | category    | total_sold | total_revenue|
++---------------------------+-------------+------------+--------------+
+| Wireless Headphones       | Electronics |        142 |    284000.00 |
+| Running Shoes             | Sports      |        198 |    237600.00 |
+| Office Chair              | Furniture   |         67 |    201000.00 |
+| Python Programming Book   | Education   |        312 |    156000.00 |
+| Smartwatch Pro            | Electronics |         89 |    133500.00 |
++---------------------------+-------------+------------+--------------+
+5 rows in set (0.04 sec)
+
+
+-- Monthly revenue trend
+
+SELECT YEAR(order_date) AS year,
+       MONTH(order_date) AS month,
+       SUM(total_amount) AS monthly_revenue
+FROM orders
+GROUP BY YEAR(order_date), MONTH(order_date)
+ORDER BY year, month;
+
++------+-------+-----------------+
+| year | month | monthly_revenue |
++------+-------+-----------------+
+| 2026 |     1 |       142500.00 |
+| 2026 |     2 |       168200.00 |
+| 2026 |     3 |       195400.00 |
+| 2026 |     4 |       210800.00 |
++------+-------+-----------------+
+4 rows in set (0.02 sec)
+```
+
+**How I designed it:**
+
+The `Order_Items` table is the most important one analytically — it stores
+one row per product per order, so you can calculate revenue and quantities
+accurately. I stored `unit_price` there separately from `Products.price`
+because prices change over time and old records need to show what the
+customer actually paid, not today's price.
+
+---
+
+## What I picked up across all three
+
+Every project kept pushing me back to the same idea — keep each piece
+doing one job. A Java class, a Python file, a SQL table — things get messy
+fast when one thing tries to do too much. Naming things clearly and
+separating responsibilities made debugging a lot easier than I expected.
+
+---
+
+## Folder structure
+
+```
+mini_vir/
+├── library-management/     Java project
+├── expense_tracker/        Python project
+└── retail-sales-sql/       SQL scripts
 ```
 
 ---
 
-## Project 3 — Online Retail Sales Analysis (SQL)
-
-A relational database project for analyzing retail sales data
-using real-world analytical SQL queries.
-
-### Tech Stack
-- SQL (MySQL / SQLite)
-- DDL — CREATE TABLE, constraints, foreign keys
-- DML — INSERT, SELECT with joins and aggregations
-
-### Database Schema
-
-```
-Customers
-├── customer_id   INT PRIMARY KEY AUTO_INCREMENT
-├── name          VARCHAR(100)
-├── email         VARCHAR(100) UNIQUE
-├── city          VARCHAR(100)
-└── join_date     DATE
-
-Products
-├── product_id    INT PRIMARY KEY AUTO_INCREMENT
-├── name          VARCHAR(100)
-├── category      VARCHAR(50)
-├── price         DECIMAL(10,2)
-└── stock_qty     INT
-
-Orders
-├── order_id      INT PRIMARY KEY AUTO_INCREMENT
-├── customer_id   INT FOREIGN KEY → Customers
-├── order_date    DATE
-├── status        VARCHAR(20)
-└── total_amount  DECIMAL(10,2)
-
-Order_Items
-├── item_id       INT PRIMARY KEY AUTO_INCREMENT
-├── order_id      INT FOREIGN KEY → Orders
-├── product_id    INT FOREIGN KEY → Products
-├── quantity      INT
-└── unit_price    DECIMAL(10,2)
-```
-
-### Table Relationships
-
-```
-Customers (1) ──────── (N) Orders
-Orders    (1) ──────── (N) Order_Items
-Products  (1) ──────── (N) Order_Items
-```
-
-### SQL Concepts Applied
-
-| Concept | Where Used |
-|---------|-----------|
-| `INNER JOIN` | Linking orders to customers and products |
-| `LEFT JOIN` | Finding customers with no recent orders |
-| `GROUP BY` | Monthly revenue, category totals |
-| `HAVING` | Filtering groups (e.g. categories over Rs.10,000) |
-| `SUM`, `COUNT`, `AVG` | Revenue totals, transaction counts |
-| `MAX`, `MIN` | Highest/lowest spending months |
-| Subqueries | Inactive customer detection with `NOT IN` |
-| `YEAR()`, `MONTH()` | Extracting date parts for monthly grouping |
-
-### Analytical Queries Built
-
-- Top 10 selling products by quantity sold and total revenue
-- Most valuable customers ranked by lifetime spend
-- Monthly revenue trend (grouped by year and month)
-- Category-wise sales breakdown with percentage of total
-- Inactive customer detection (no orders in last 6 months)
-- Average order value per customer
-- Products never ordered (using LEFT JOIN + NULL check)
-
-### Key Design Decisions
-
-| Decision | Reason |
-|----------|--------|
-| `unit_price` in `Order_Items` | Product price can change — historical price must be preserved |
-| `DECIMAL(10,2)` for money | `FLOAT` has rounding errors — never use for currency |
-| `Order_Items` separate from `Orders` | One order can have many products — required for First Normal Form (1NF) |
-| `email UNIQUE` in Customers | Prevents duplicate registrations |
-| Foreign keys on all relationships | Database enforces referential integrity automatically |
-
----
-
-## Tools Used Across All Projects
-
-| Tool | Purpose |
-|------|---------|
-| VSCode | Code editor for all three projects |
-| Git + GitHub | Version control and portfolio hosting |
-| Java 17 | Object-oriented backend project |
-| Maven | Java build and dependency management |
-| Python 3.11 | Scripting and data analysis project |
-| matplotlib | Python chart generation |
-| SQL | Relational database and analytics |
-
-## Skills Demonstrated
-
-- Object-Oriented Programming (Java and Python)
-- Layered architecture and separation of concerns
-- Data persistence — CSV files and SQL relational database
-- Data analysis and visualization
-- CLI application design with input validation
-- Exception handling and defensive programming
-- Git version control
-
----
-
-## How to Run Each Project
-
-```bash
-# Java — Library Management System
-cd library-management
-mvn compile
-mvn compile exec:java
-
-# Python — Smart Expense Tracker
-cd expense_tracker
-pip install matplotlib
-python main.py
-
-# SQL — Retail Sales Analysis
-# Open your SQL client (MySQL Workbench / DB Browser for SQLite)
-# Run the .sql files in order: schema → data → queries
-```
-
----
+*Akshay — April 2026*
