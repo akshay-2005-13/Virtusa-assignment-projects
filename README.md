@@ -309,5 +309,3 @@ python main.py
 ```
 
 ---
-
-*Built independently with mentorship — all logic designed and coded by the developer.*
